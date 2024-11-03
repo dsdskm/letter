@@ -1,5 +1,7 @@
+import { storage } from "common/firebaseConfig";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
 import { Account, Contents } from "interface/interface";
 
 const API_URL_LOCAL = "http://localhost:5001";
@@ -40,3 +42,9 @@ export const getContents = async (id: string) => {
     return null
   }
 };
+
+export const getImageDownloadUrl = async (path: string) => {
+  const fileRef = ref(storage, path)
+  const url = await getDownloadURL(fileRef)
+  return url
+}

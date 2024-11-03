@@ -1,11 +1,12 @@
 import { Box, Button, CardMedia, Typography, useTheme } from "@mui/material"
-import { getAccount, getContents } from "api/api";
+import { getAccount, getContents, getImageDownloadUrl } from "api/api";
 import { Account, Contents } from "interface/interface";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { AccountState } from "state/stateAction";
 import ReactPlayer from 'react-player';
 import NotFoundView from "views/NotFoundView";
+import Loading from "views/components/Loading";
 
 const ContentsEditView = () => {
     const theme = useTheme();
@@ -34,6 +35,7 @@ const ContentsEditView = () => {
                     setAccountData(_accountData)
                     const _contentsData = await getContents(id)
                     if (_contentsData) {
+                        _contentsData.url = await getImageDownloadUrl(_contentsData.path)
                         setContentsData(_contentsData)
                     }
 
@@ -46,8 +48,9 @@ const ContentsEditView = () => {
     console.log(`accountData`, accountData)
     console.log(`contentsData`, contentsData)
     if (!accountData || !contentsData) {
-        return <NotFoundView />
+        return <Loading/>
     }
+    console.log(`url ${contentsData.url}`)
     return <>
         <Box sx={{ m: 5, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
             <Box sx={{ m: 5, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", width: 700 }}>
@@ -55,7 +58,7 @@ const ContentsEditView = () => {
                     <Typography variant="h4">나에게 쓰는 편지</Typography>
                 </Box>
                 <Box sx={{
-                    width:"100%",
+                    width: "100%",
                     flex: 1, display: "flex",
                     justifyContent: 'space-between'
                 }}>
