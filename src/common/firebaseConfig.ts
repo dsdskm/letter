@@ -3,13 +3,13 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage"
 const firebaseConfig = {
-    apiKey: "AIzaSyBeTUJj0spa3mnNcNTqEs_vVh1KH-Bc7HE",
-    authDomain: "mydiary-dev-5daf0.firebaseapp.com",
-    projectId: "mydiary-dev-5daf0",
-    storageBucket: "mydiary-dev-5daf0.appspot.com",
-    messagingSenderId: "342289437608",
-    appId: "1:342289437608:web:ff19149cc8134fdeacc39d",
-    measurementId: "G-4P4KZEE19S"
+  apiKey: "AIzaSyBeTUJj0spa3mnNcNTqEs_vVh1KH-Bc7HE",
+  authDomain: "mydiary-dev-5daf0.firebaseapp.com",
+  projectId: "mydiary-dev-5daf0",
+  storageBucket: "mydiary-dev-5daf0.appspot.com",
+  messagingSenderId: "342289437608",
+  appId: "1:342289437608:web:4947bcb393eefc4facc39d",
+  measurementId: "G-6T43PWNLRS"
 };
 
 // Initialize Firebase
