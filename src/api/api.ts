@@ -4,7 +4,7 @@ import { doc, getDoc } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 import { Account, Contents } from "interface/interface";
 
-const API_URL_LOCAL = "http://localhost:5001";
+const API_URL_LOCAL = "http://192.168.219.103:5001";
 const API_URL_QA = API_URL_LOCAL;
 
 export const getAccount = async (id: string) => {

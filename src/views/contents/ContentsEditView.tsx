@@ -1,4 +1,4 @@
-import { Box, Button, CardMedia, Typography, useTheme } from "@mui/material"
+import { Box, Button, Card, CardMedia, Divider, Typography, useTheme } from "@mui/material"
 import { getAccount, getContents, getImageDownloadUrl } from "api/api";
 import { Account, Contents } from "interface/interface";
 import { useEffect, useState } from "react";
@@ -7,6 +7,7 @@ import { AccountState } from "state/stateAction";
 import ReactPlayer from 'react-player';
 import NotFoundView from "views/NotFoundView";
 import Loading from "views/components/Loading";
+import { isMobile } from "react-device-detect"
 
 const ContentsEditView = () => {
     const theme = useTheme();
@@ -17,7 +18,7 @@ const ContentsEditView = () => {
     const [contentsData, setContentsData] = useState<Contents>()
     const [width, setWidth] = useState<number>(0)
     const [height, setHeight] = useState<number>(0)
-    console.log(`width=${window.innerWidth} height=${window.innerHeight}`)
+    console.log(`width=${window.innerWidth} height=${window.innerHeight} isMobile=${isMobile}`)
     useEffect(() => {
         if (window) {
             setWidth(window.innerWidth * 0.5)
@@ -48,26 +49,33 @@ const ContentsEditView = () => {
     console.log(`accountData`, accountData)
     console.log(`contentsData`, contentsData)
     if (!accountData || !contentsData) {
-        return <Loading/>
+        return <Loading />
     }
     console.log(`url ${contentsData.url}`)
     return <>
-        <Box sx={{ m: 5, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-            <Box sx={{ m: 5, display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", width: 700 }}>
-                <Box >
-                    <Typography variant="h4">나에게 쓰는 편지</Typography>
-                </Box>
+        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", pt: 1 }}>
+
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", width: isMobile ? window.innerWidth * 0.8 : 700 }}>
+                <Typography variant="h4" fontStyle="bold" color={"#002c5f"}>나에게 쓰는 편지</Typography>
+                <Divider sx={{ backgroundColor: theme.palette.primary.main, height: 1, width: "100%", mt: isMobile ? 2 : 5, mb: isMobile ? 2 : 5 }} />
                 <Box sx={{
                     width: "100%",
                     flex: 1, display: "flex",
-                    justifyContent: 'space-between'
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    mt: 1,
+                    mb: 1
                 }}>
-                    <Typography variant="h5">{accountData.name}</Typography>
-                    <Typography variant="h5">사번 {accountData.number}</Typography>
+                    <Card sx={{ backgroundColor: theme.palette.primary.main, borderRadius: 5, p: 1 }}>
+                        <Typography variant="h5" color="white">{accountData.name}</Typography>
+                    </Card>
+                    <Typography variant="h5">{accountData.number}</Typography>
+
                 </Box>
 
                 <Box>
-                    <ReactPlayer width={700} height={500} url={contentsData.url} controls />
+                    <ReactPlayer width={isMobile ? window.innerWidth * 0.95 : 700} height={isMobile ? window.innerHeight * 0.7 : 500} url={contentsData.url} controls />
                 </Box>
             </Box>
         </Box>
