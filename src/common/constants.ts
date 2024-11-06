@@ -1,4 +1,5 @@
 export const COLLECTION_ACCOUNT = "account"
+export const COLLECTION_CONTENTS = "contents"
 
 export const ROUTE_ID = "/:id";
 export const ROUTE_LIST = "/list"
