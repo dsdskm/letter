@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardMedia, Divider, Typography, useTheme } from "@mui/material";
 import { getAccount, getContents, getImageDownloadUrl } from "api/api";
 import { Account, Contents } from "interface/interface";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { AccountState } from "state/stateAction";
 import ReactPlayer from "react-player";
@@ -12,6 +12,8 @@ import bgContents from "images/pc/background_contents.png"
 import airplane from "images/pc/airplane.png"
 import mobileBgContents from "images/mobile/background_contents.png"
 import mobileAirplane from "images/mobile/airplane.png"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ContentsEditView = () => {
   const width = window.innerWidth
@@ -22,6 +24,8 @@ const ContentsEditView = () => {
   const id = accountState && accountState.account ? accountState.account.key : "";
   const [accountData, setAccountData] = useState<Account>();
   const [contentsData, setContentsData] = useState<Contents>();
+  const [loading, setLoading] = useState<boolean>(false)
+  const toastId = useRef(null)
   useEffect(() => {
     const initData = async () => {
       console.log(`initData id ${id}`);
@@ -45,23 +49,43 @@ const ContentsEditView = () => {
   }
   console.log(`url ${contentsData.url}`);
 
-  const videoWidth = isMobile?(1080 / 4):1080/3
-  const videoHeight = isMobile?(1920 / 4):1920/3
+  const videoWidth = isMobile ? (1080 / 4) : 1080 / 3
+  const videoHeight = isMobile ? (1920 / 4) : 1920 / 3
+
+  const onDownloadClick = () => {
+    const srcUrl = contentsData.url
+    toast("잠시 후 다운로드가 시작됩니다.")
+    fetch(srcUrl, { method: 'GET' }).then((res) => res.blob()).then((blob) => {
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${contentsData.number}_${accountData.name}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    }).catch((err) => {
+      console.error('err', err);
+    }).finally(() => {
+      toast.dismiss()
+    })
+  };
   return (
     <>
       {isMobile ? <>
         <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", }}>
           <Box
-            sx={{ background: `url(${mobileBgContents})`, backgroundPosition: "center", backgroundSize: "cover", width: width, minWidth: width, height: height, display: "flex", flexDirection: "column", alignItems: "center", }}>
+            sx={{ background: `url(${mobileBgContents})`, backgroundPosition: "center", backgroundSize: "cover", width: width, minWidth: width, height: height, display: "flex", flexDirection: "column", alignItems: "center" }}>
+
             <Box
-              sx={{ background: `url(${mobileAirplane})`, width: 50, height: 47, backgroundSize: "contain", backgroundRepeat: "no-repeat", mt: 3 }} />
+              sx={{ background: `url(${mobileAirplane})`, width: 50, height: 47, mt: 3, backgroundSize: "contain", backgroundRepeat: "no-repeat" }} />
+
             <Card sx={{ backgroundColor: "#8ecfaf", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", p: 3, borderRadius: 10, height: 5 }} elevation={0}>
-              <Typography sx={{ fontFamily: "medium", fontSize: 25, }}>{accountData.name} {accountData.number}</Typography>
+              <Button sx={{ fontFamily: "medium", fontSize: 25, }} onClick={onDownloadClick}>{accountData.name} {accountData.number}</Button>
             </Card>
 
             <Box border={1} borderColor="black" sx={{ width: videoWidth, height: videoHeight, backgroundColor: "white", mt: 2 }}>
               <ReactPlayer width={videoWidth} height={videoHeight} url={contentsData.url} controls />
-
             </Box>
 
 
@@ -85,7 +109,9 @@ const ContentsEditView = () => {
 
           </Box>
         </Box></>}
-
+      <ToastContainer
+        hideProgressBar={false}
+        autoClose={1000 * 60} />
     </>
   );
 };

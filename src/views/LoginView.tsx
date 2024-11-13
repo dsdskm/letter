@@ -38,7 +38,7 @@ const LoginView = () => {
                 return
             }
         }
-        alert("이름,사번,생년월일을 확인해주세요.")
+        alert(`이름,사번,생년월일을 확인해주세요.`)
         setLoading(false)
     }
     if (loading) {
