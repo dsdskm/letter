@@ -8,23 +8,20 @@ import ReactPlayer from "react-player";
 import NotFoundView from "views/NotFoundView";
 import Loading from "views/components/Loading";
 import { isMobile } from "react-device-detect";
+import bgContents from "images/pc/background_contents.png"
+import airplane from "images/pc/airplane.png"
+import mobileBgContents from "images/mobile/background_contents.png"
+import mobileAirplane from "images/mobile/airplane.png"
 
 const ContentsEditView = () => {
+  const width = window.innerWidth
+  const height = window.innerHeight - window.innerHeight * 0.01
   const theme = useTheme();
   const accountState = useSelector((state: AccountState) => state);
   console.log(`accountState ${JSON.stringify(accountState)}`);
   const id = accountState && accountState.account ? accountState.account.key : "";
   const [accountData, setAccountData] = useState<Account>();
   const [contentsData, setContentsData] = useState<Contents>();
-  const [width, setWidth] = useState<number>(0);
-  const [height, setHeight] = useState<number>(0);
-  console.log(`width=${window.innerWidth} height=${window.innerHeight} isMobile=${isMobile}`);
-  useEffect(() => {
-    if (window) {
-      setWidth(window.innerWidth * 0.5);
-      setHeight(window.innerHeight * 0.5);
-    }
-  }, [window]);
   useEffect(() => {
     const initData = async () => {
       console.log(`initData id ${id}`);
@@ -43,48 +40,52 @@ const ContentsEditView = () => {
     };
     initData();
   }, [id]);
-  console.log(`id ${id}`);
-  console.log(`accountData`, accountData);
-  console.log(`contentsData`, contentsData);
   if (!accountData || !contentsData) {
     return <Loading />;
   }
   console.log(`url ${contentsData.url}`);
-  const w = (1080 / 2) * 3;
-  const h = (1920 / 2) * 3;
+
+  const videoWidth = isMobile?(1080 / 4):1080/3
+  const videoHeight = isMobile?(1920 / 4):1920/3
   return (
     <>
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", pt: 1 }}>
-        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", width: w}}>
-          <Typography variant="h4" fontStyle="bold" color={"#002c5f"}>
-            나에게 쓰는 편지
-          </Typography>
-          <Divider sx={{ backgroundColor: theme.palette.primary.main, height: 1, width: "100%", mt: isMobile ? 2 : 5, mb: isMobile ? 2 : 5 }} />
+      {isMobile ? <>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", }}>
           <Box
-            sx={{
-              width: "100%",
-              flex: 1,
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              mt: 1,
-              mb: 1,
-            }}
-          >
-            <Card sx={{ backgroundColor: theme.palette.primary.main, borderRadius: 5, p: 1 }}>
-              <Typography variant="h5" color="white">
-                {accountData.name}
-              </Typography>
+            sx={{ background: `url(${mobileBgContents})`, backgroundPosition: "center", backgroundSize: "cover", width: width, minWidth: width, height: height, display: "flex", flexDirection: "column", alignItems: "center", }}>
+            <Box
+              sx={{ background: `url(${mobileAirplane})`, width: 50, height: 47, backgroundSize: "contain", backgroundRepeat: "no-repeat", mt: 3 }} />
+            <Card sx={{ backgroundColor: "#8ecfaf", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", p: 3, borderRadius: 10, height: 5 }} elevation={0}>
+              <Typography sx={{ fontFamily: "medium", fontSize: 25, }}>{accountData.name} {accountData.number}</Typography>
             </Card>
-            <Typography variant="h5">{accountData.number}</Typography>
-          </Box>
-          <Box sx={{ display: "flex", width: (1080 / 2) * 3, height: (1920 / 2) * 3 }}>
-            {/* <ReactPlayer width={isMobile ? window.innerWidth * 0.95 : 700} height={isMobile ? window.innerHeight * 0.7 : 500} url={contentsData.url} controls /> */}
-            <ReactPlayer width={"30%"} height={"30%"} url={contentsData.url} controls />
+
+            <Box border={1} borderColor="black" sx={{ width: videoWidth, height: videoHeight, backgroundColor: "white", mt: 2 }}>
+              <ReactPlayer width={videoWidth} height={videoHeight} url={contentsData.url} controls />
+
+            </Box>
+
+
           </Box>
         </Box>
-      </Box>
+      </> : <>
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", }}>
+          <Box
+            sx={{ background: `url(${bgContents})`, backgroundPosition: "center", backgroundSize: "cover", width: 1920, minWidth: 1920, height: "98vh", display: "flex", flexDirection: "column", alignItems: "center", }}>
+            <Box
+              sx={{ background: `url(${airplane})`, width: 73, height: 47, backgroundSize: "contain", backgroundRepeat: "no-repeat", mt: 7 }} />
+            <Card sx={{ backgroundColor: "#8ecfaf", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", p: 3, mt: 1, borderRadius: 10, height: 10 }} elevation={0}>
+              <Typography sx={{ fontFamily: "medium", fontSize: 25, }}>{accountData.name} {accountData.number}</Typography>
+            </Card>
+
+            <Box border={1} borderColor="black" sx={{ width: videoWidth, height: videoHeight, backgroundColor: "white", mt: 2 }}>
+              <ReactPlayer width={videoWidth} height={videoHeight} url={contentsData.url} controls />
+
+            </Box>
+
+
+          </Box>
+        </Box></>}
+
     </>
   );
 };

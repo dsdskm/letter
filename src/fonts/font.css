@@ -2,3 +2,13 @@
     font-family: "Bold";
     src:url("./HyundaiSansTextKRBold.ttf")
 }
+
+@font-face{
+    font-family: "Medium";
+    src:url("./HyundaiSansTextKRMedium.ttf")
+}
+
+@font-face{
+    font-family: "Regular";
+    src:url("./HyundaiSansTextKRRegular.ttf")
+}

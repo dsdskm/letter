@@ -1,6 +1,7 @@
 export interface Account {
   id: string;
   type: string; // basic, master
+  birth: string;
   name: string;
   number: string;
   password: string;
