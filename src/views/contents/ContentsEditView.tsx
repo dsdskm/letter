@@ -7,7 +7,7 @@ import { AccountState } from "state/stateAction";
 import ReactPlayer from "react-player";
 import NotFoundView from "views/NotFoundView";
 import Loading from "views/components/Loading";
-import { isMobile } from "react-device-detect";
+import { isMobile, browserName } from "react-device-detect";
 import bgContents from "images/pc/background_contents.png"
 import airplane from "images/pc/airplane.png"
 import mobileBgContents from "images/mobile/background_contents.png"
@@ -16,6 +16,9 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ContentsEditView = () => {
+
+  console.log(`browserName=${browserName}`)
+  const isSafari = browserName.includes("Safari")
   const width = window.innerWidth
   const height = window.innerHeight - window.innerHeight * 0.01
   const theme = useTheme();
@@ -25,7 +28,7 @@ const ContentsEditView = () => {
   const [accountData, setAccountData] = useState<Account>();
   const [contentsData, setContentsData] = useState<Contents>();
   const [loading, setLoading] = useState<boolean>(false)
-  const toastId = useRef(null)
+  const [isReady, setIsReady] = useState<boolean>(false)
   useEffect(() => {
     const initData = async () => {
       console.log(`initData id ${id}`);
@@ -53,12 +56,18 @@ const ContentsEditView = () => {
   const videoHeight = isMobile ? (1920 / 4) : 1920 / 3
 
   const onDownloadClick = () => {
+    if (isSafari) {
+      alert("Chrome 브라우져를 통해 다운로드 가능합니다.")
+      return
+    }
     const srcUrl = contentsData.url
     toast("잠시 후 다운로드가 시작됩니다.")
     fetch(srcUrl, { method: 'GET' }).then((res) => res.blob()).then((blob) => {
+      console.log(`blob type ${blob.type}`)
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
+      console.log(`url ${url}`)
       a.download = `${contentsData.number}_${accountData.name}`;
       document.body.appendChild(a);
       a.click();
@@ -81,11 +90,11 @@ const ContentsEditView = () => {
               sx={{ background: `url(${mobileAirplane})`, width: 50, height: 47, mt: 3, backgroundSize: "contain", backgroundRepeat: "no-repeat" }} />
 
             <Card sx={{ backgroundColor: "#8ecfaf", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", p: 3, borderRadius: 10, height: 5 }} elevation={0}>
-              <Button sx={{ fontFamily: "medium", fontSize: 25, }} onClick={onDownloadClick}>{accountData.name} {accountData.number}</Button>
+              <Button disabled={!isReady} sx={{ fontFamily: "medium", fontSize: 25, }} onClick={onDownloadClick}>{accountData.name} {accountData.number}</Button>
             </Card>
 
             <Box border={1} borderColor="black" sx={{ width: videoWidth, height: videoHeight, backgroundColor: "white", mt: 2 }}>
-              <ReactPlayer width={videoWidth} height={videoHeight} url={contentsData.url} controls />
+              <ReactPlayer width={videoWidth} height={videoHeight} url={contentsData.url} controls onReady={() => setIsReady(true)} />
             </Box>
 
 
@@ -98,12 +107,11 @@ const ContentsEditView = () => {
             <Box
               sx={{ background: `url(${airplane})`, width: 73, height: 47, backgroundSize: "contain", backgroundRepeat: "no-repeat", mt: 7 }} />
             <Card sx={{ backgroundColor: "#8ecfaf", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", p: 3, mt: 1, borderRadius: 10, height: 10 }} elevation={0}>
-              <Typography sx={{ fontFamily: "medium", fontSize: 25, }}>{accountData.name} {accountData.number}</Typography>
+              <Button disabled={!isReady} sx={{ fontFamily: "medium", fontSize: 25, }} onClick={onDownloadClick}>{accountData.name} {accountData.number}</Button>
             </Card>
 
             <Box border={1} borderColor="black" sx={{ width: videoWidth, height: videoHeight, backgroundColor: "white", mt: 2 }}>
               <ReactPlayer width={videoWidth} height={videoHeight} url={contentsData.url} controls />
-
             </Box>
 
 
