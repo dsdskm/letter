@@ -1,5 +1,4 @@
-import { ROUTE_CONTENTS_EDIT_VIEW, ROUTE_ID } from 'common/constants';
-import React from 'react';
+import { ROUTE_CONTENTS_EDIT_VIEW } from 'common/constants';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import ContentsEditView from 'views/contents/ContentsEditView';
 import LoginView from 'views/LoginView';
