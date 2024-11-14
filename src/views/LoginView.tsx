@@ -1,4 +1,4 @@
-import { Box, Button, Card, TextField, Typography, useTheme } from "@mui/material";
+import { Box, Button, Card, TextField, Typography } from "@mui/material";
 import { ROUTE_CONTENTS_EDIT_VIEW } from "common/constants";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -66,7 +66,6 @@ const LoginView = () => {
   const cardWidth = isMobile ? width * 0.7 : 400;
   const fieldWidth = isMobile ? "100%" : STYLE.LOGIN_FIELD_WIDTH;
   const fieldHeight = STYLE.LOGIN_FIELD_HEIGHT;
-  const theme = useTheme();
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
   const [name, setName] = useState<string>("");
@@ -79,6 +78,7 @@ const LoginView = () => {
     if (name && number && birth) {
       setLoading(true);
       const data = await getAccount(number);
+      console.log(`data ${JSON.stringify(data)}`)
       if (data && data.name === name && data.birth === birth) {
         setLoading(false);
         dispatch(setAccount(data.id));

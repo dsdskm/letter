@@ -69,20 +69,3 @@ export const getImageDownloadUrl = async (path: string) => {
   const url = await getDownloadURL(fileRef);
   return url;
 };
-
-export const getVideoSize = async(videoUrl:string)=>{
-  try {
-    const requestOptions = {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    };
-    const url = `${API_URL_QA}/contents/videoSize?url=${videoUrl}`;
-    console.log(`url ${url}`);
-    const response = await fetch(url, requestOptions);
-    const json = await response.json();
-    return json as Contents;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-}

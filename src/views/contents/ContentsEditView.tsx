@@ -1,5 +1,5 @@
-import { Box, Button, Card, useTheme } from "@mui/material";
-import { getAccount, getContents, getImageDownloadUrl, getVideoSize } from "api/api";
+import { Box, Button, Card } from "@mui/material";
+import { getAccount, getContents, getImageDownloadUrl } from "api/api";
 import { Account, Contents } from "interface/interface";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -13,11 +13,36 @@ import mobileBgContents from "images/mobile/background_contents.png";
 import mobileAirplane from "images/mobile/airplane.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { MSG } from "common/resources";
+import { styled } from "@mui/system";
+
+const Wrapper = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+});
+
+const ContentsWrapper = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+});
+
+const TitleWrapper = styled(Card)({
+  backgroundColor: "#8ecfaf",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  borderRadius: 10,
+  height: 10,
+});
+
 const ContentsEditView = () => {
-  console.log(`browserName=${browserName}`);
   const isSafari = browserName.includes("Safari");
-  const width = window.innerWidth;
-  const height = window.innerHeight - window.innerHeight * 0.01;
+  const width = isMobile ? window.innerWidth : 1920;
+  const height = isMobile ? window.innerHeight - window.innerHeight * 0.01 : "98vh";
   const accountState = useSelector((state: AccountState) => state);
   const id = accountState && accountState.account ? accountState.account.key : "";
   const [accountData, setAccountData] = useState<Account>();
@@ -27,6 +52,11 @@ const ContentsEditView = () => {
   const [videoHeight, setVideoHeight] = useState<number>(0);
   const [originVideoWidth, setOriginVideoWidth] = useState<number>(0);
   const [originVideoHeight, setOriginVideoHeight] = useState<number>(0);
+  const backgroundImage = isMobile ? mobileBgContents : bgContents;
+  const airplaneIcon = isMobile ? mobileAirplane : airplane;
+  const airplaneWidth = isMobile ? 50 : 70;
+  const airplaneHeight = isMobile ? 50 : 70;
+  const titleHeight = isMobile ? 5 : 10;
 
   useEffect(() => {
     const initData = async () => {
@@ -40,7 +70,7 @@ const ContentsEditView = () => {
           if (_contentsData) {
             _contentsData.url = await getImageDownloadUrl(_contentsData.path);
             setContentsData(_contentsData);
-            const d = await getVideoSize(_contentsData.url);
+            // get video file size
             const v = document.createElement("video");
             v.src = _contentsData.url;
             v.addEventListener(
@@ -74,24 +104,22 @@ const ContentsEditView = () => {
     }
     setVideoWidth(w);
     setVideoHeight(h);
-  }, [isMobile, originVideoWidth, originVideoHeight]);
+  }, [originVideoWidth, originVideoHeight]);
 
   const onDownloadClick = () => {
     if (isSafari) {
-      alert("Chrome 브라우져를 통해 다운로드 가능합니다.");
+      alert(MSG.DOWNLOAD_ERR);
       return;
     }
     if (contentsData && accountData) {
       const srcUrl = contentsData.url;
-      toast("잠시 후 다운로드가 시작됩니다.");
+      toast(MSG.DOWNLOAD);
       fetch(srcUrl, { method: "GET" })
         .then((res) => res.blob())
         .then((blob) => {
-          console.log(`blob type ${blob.type}`);
           const url = window.URL.createObjectURL(blob);
           const a = document.createElement("a");
           a.href = url;
-          console.log(`url ${url}`);
           a.download = `${contentsData.number}_${accountData.name}`;
           document.body.appendChild(a);
           a.click();
@@ -111,73 +139,34 @@ const ContentsEditView = () => {
     return <Loading />;
   }
 
-  console.log(`videoWidth=${videoWidth}, videoHeight=${videoHeight}`);
-
   return (
     <>
-      {isMobile ? (
-        <>
-          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-            <Box
-              sx={{
-                background: `url(${mobileBgContents})`,
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-                width: width,
-                minWidth: width,
-                height: height,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Box sx={{ background: `url(${mobileAirplane})`, width: 50, height: 47, mt: 3, backgroundSize: "contain", backgroundRepeat: "no-repeat" }} />
+      <>
+        <Wrapper>
+          <ContentsWrapper
+            sx={{
+              background: `url(${backgroundImage})`,
+              backgroundPosition: "center",
+              backgroundSize: "cover",
+              width: width,
+              minWidth: width,
+              height: height,
+            }}
+          >
+            <Box sx={{ background: `url(${airplaneIcon})`, width: airplaneWidth, height: airplaneHeight, mt: 3, backgroundSize: "contain", backgroundRepeat: "no-repeat" }} />
 
-              <Card sx={{ backgroundColor: "#8ecfaf", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", p: 3, borderRadius: 10, height: 5 }} elevation={0}>
-                <Button disabled={!isReady} sx={{ fontFamily: "medium", fontSize: 25 }} onClick={onDownloadClick}>
-                  {accountData.name} {accountData.number}
-                </Button>
-              </Card>
+            <TitleWrapper sx={{ p: 3,  height: titleHeight }} elevation={0}>
+              <Button disabled={!isReady} sx={{ fontFamily: "medium", fontSize: 25 }} onClick={onDownloadClick}>
+                {accountData.name} {accountData.number}
+              </Button>
+            </TitleWrapper>
 
-              <Box border={1} borderColor="black" sx={{ width: videoWidth, height: videoHeight, backgroundColor: "white", mt: 2 }}>
-                <ReactPlayer width={videoWidth} height={videoHeight} url={contentsData.url} controls onReady={() => setIsReady(true)} />
-              </Box>
+            <Box border={1} borderColor="black" sx={{ width: videoWidth, height: videoHeight, backgroundColor: "white", mt: 2 }}>
+              <ReactPlayer width={videoWidth} height={videoHeight} url={contentsData.url} controls onReady={() => setIsReady(true)} />
             </Box>
-          </Box>
-        </>
-      ) : (
-        <>
-          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-            <Box
-              sx={{
-                background: `url(${bgContents})`,
-                backgroundPosition: "center",
-                backgroundSize: "cover",
-                width: 1920,
-                minWidth: 1920,
-                height: "98vh",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Box sx={{ background: `url(${airplane})`, width: 73, height: 47, backgroundSize: "contain", backgroundRepeat: "no-repeat", mt: 7 }} />
-              <Card
-                sx={{ backgroundColor: "#8ecfaf", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", p: 3, mt: 1, borderRadius: 10, height: 10 }}
-                elevation={0}
-              >
-                <Button disabled={!isReady} sx={{ fontFamily: "medium", fontSize: 25 }} onClick={onDownloadClick}>
-                  {accountData.name} {accountData.number}
-                </Button>
-              </Card>
-
-              <Box border={1} borderColor="black" sx={{ width: videoWidth, height: videoHeight, backgroundColor: "white", mt: 2 }}>
-                <ReactPlayer width={videoWidth} height={videoHeight} url={contentsData.url} controls />
-              </Box>
-            </Box>
-          </Box>
-        </>
-      )}
+          </ContentsWrapper>
+        </Wrapper>
+      </>
       <ToastContainer hideProgressBar={false} autoClose={1000 * 60} />
     </>
   );
