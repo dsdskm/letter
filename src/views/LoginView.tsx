@@ -1,5 +1,5 @@
 import { Box, Button, Card, TextField, Typography } from "@mui/material";
-import { ROUTE_CONTENTS_EDIT_VIEW } from "common/constants";
+import { BIRTH_ID, LOGIN_ID, NAME_ID, NUMBER_ID, ROUTE_CONTENTS_EDIT_VIEW } from "common/constants";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -78,7 +78,7 @@ const LoginView = () => {
     if (name && number && birth) {
       setLoading(true);
       const data = await getAccount(number);
-      console.log(`data ${JSON.stringify(data)}`)
+      console.log(`data ${JSON.stringify(data)}`);
       if (data && data.name === name && data.birth === birth) {
         setLoading(false);
         dispatch(setAccount(data.id));
@@ -93,8 +93,8 @@ const LoginView = () => {
     return <Loading />;
   }
 
-  const getFieldView = (value: string, setter: any, label: string, hint: string) => {
-    return <NameField value={value} onChange={(e) => setter(e.target.value)} sx={{ width: fieldWidth, height: fieldHeight, mb: 2 }} label={label} InputProps={InputPropsStyle} placeholder={hint} />;
+  const getFieldView = (id: string, value: string, setter: any, label: string, hint: string) => {
+    return <NameField  id={id} value={value} onChange={(e) => setter(e.target.value)} sx={{ width: fieldWidth, height: fieldHeight, mb: 2 }} label={label} InputProps={InputPropsStyle} placeholder={hint} />;
   };
   return (
     <>
@@ -114,10 +114,11 @@ const LoginView = () => {
               <LoginTitle>{LABEL.LOGIN_TITLE}</LoginTitle>
               <LoginSubTitle>{LABEL.LOGIN_SUB_TITLE}</LoginSubTitle>
             </TitleWrapper>
-            {getFieldView(name, setName, LABEL.NAME, MSG.HINT_NAME)}
-            {getFieldView(number, setNumber, LABEL.NUMBER, MSG.HINT_NUMBER)}
-            {getFieldView(birth, setBirth, LABEL.BIRTH, MSG.HINT_BIRTH)}
+            {getFieldView(NAME_ID, name, setName, LABEL.NAME, MSG.HINT_NAME)}
+            {getFieldView(NUMBER_ID, number, setNumber, LABEL.NUMBER, MSG.HINT_NUMBER)}
+            {getFieldView(BIRTH_ID, birth, setBirth, LABEL.BIRTH, MSG.HINT_BIRTH)}
             <LoginButton
+              id={LOGIN_ID}
               variant="contained"
               sx={{
                 width: fieldWidth,
