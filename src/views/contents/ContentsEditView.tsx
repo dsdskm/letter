@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { AccountState } from "state/stateAction";
 import ReactPlayer from "react-player";
 import Loading from "views/components/Loading";
-import { isMobile, browserName } from "react-device-detect";
+import { isMobile } from "react-device-detect";
 import bgContents from "images/pc/background_contents.png";
 import airplane from "images/pc/airplane.png";
 import mobileBgContents from "images/mobile/background_contents.png";
@@ -40,7 +40,7 @@ const TitleWrapper = styled(Card)({
 });
 
 const ContentsEditView = () => {
-  const isSafari = browserName.includes("Safari");
+  // const isSafari = browserName.includes("Safari");
   const width = isMobile ? window.innerWidth : 1920;
   const height = isMobile ? window.innerHeight - window.innerHeight * 0.01 : "98vh";
   const accountState = useSelector((state: AccountState) => state);
@@ -107,10 +107,12 @@ const ContentsEditView = () => {
   }, [originVideoWidth, originVideoHeight]);
 
   const onDownloadClick = () => {
+    /*
     if (isSafari) {
       alert(MSG.DOWNLOAD_ERR);
       return;
     }
+    */
     if (contentsData && accountData) {
       const srcUrl = contentsData.url;
       toast(MSG.DOWNLOAD);

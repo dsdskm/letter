@@ -27,7 +27,22 @@ const FieldWrapper = styled(Box)({
   justifyContent: "center",
 });
 
-const LoginCard = styled(Card)({ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", backgroundColor: "white" });
+const LoginCard = styled(Card)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "white",
+});
+
+const DonwloadGuideText = styled(Typography)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  marginTop: 10,
+  fontFamily: "regular",
+});
 
 const TitleWrapper = styled(Box)({
   width: "100%",
@@ -66,6 +81,7 @@ const LoginView = () => {
   const cardWidth = isMobile ? width * 0.7 : 400;
   const fieldWidth = isMobile ? "100%" : STYLE.LOGIN_FIELD_WIDTH;
   const fieldHeight = STYLE.LOGIN_FIELD_HEIGHT;
+  const downloadTextFontSize = isMobile ? 12 : 14;
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
   const [name, setName] = useState<string>("");
@@ -94,7 +110,9 @@ const LoginView = () => {
   }
 
   const getFieldView = (id: string, value: string, setter: any, label: string, hint: string) => {
-    return <NameField  id={id} value={value} onChange={(e) => setter(e.target.value)} sx={{ width: fieldWidth, height: fieldHeight, mb: 2 }} label={label} InputProps={InputPropsStyle} placeholder={hint} />;
+    return (
+      <NameField id={id} value={value} onChange={(e) => setter(e.target.value)} sx={{ width: fieldWidth, height: fieldHeight, mb: 2 }} label={label} InputProps={InputPropsStyle} placeholder={hint} />
+    );
   };
   return (
     <>
@@ -109,7 +127,7 @@ const LoginView = () => {
             height: height,
           }}
         >
-          <LoginCard sx={{ p: 3, borderRadius: 5, width: cardWidth }}>
+          <LoginCard sx={{ p: 3, borderRadius: 5, width: cardWidth, mt: isMobile ? 7 : 0 }}>
             <TitleWrapper sx={{ mb: 2 }}>
               <LoginTitle>{LABEL.LOGIN_TITLE}</LoginTitle>
               <LoginSubTitle>{LABEL.LOGIN_SUB_TITLE}</LoginSubTitle>
@@ -133,6 +151,7 @@ const LoginView = () => {
             >
               {LABEL.LOGIN}
             </LoginButton>
+            <DonwloadGuideText sx={{ fontSize: downloadTextFontSize }}>{MSG.DOWNLOAD_GUIDE}</DonwloadGuideText>
           </LoginCard>
         </FieldWrapper>
       </Wrapper>

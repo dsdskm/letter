@@ -18,6 +18,7 @@ export const MSG ={
     HINT_NUMBER:"사번을 입력하세요.(7자리)",
     HINT_BIRTH:"생년월일 입력하세요.(6자리)",
     DOWNLOAD_ERR:"Chrome 브라우져를 통해 다운로드 가능합니다.",
-    DOWNLOAD:"잠시 후 다운로드가 시작됩니다."
+    DOWNLOAD:"잠시 후 다운로드가 시작됩니다.",
+    DOWNLOAD_GUIDE:"*아이폰 영상 다운로드 오류 발생 시 크롬 브라우저(앱)를 통해 접속 후 다운로드 시도해 보세요!"
     
 }
