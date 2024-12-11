@@ -1,14 +1,14 @@
 @font-face{
     font-family: "Bold";
-    src:url("./HyundaiSansTextKRBold.ttf")
+    src:url("./KiaSignatureBold.ttf")
 }
 
 @font-face{
     font-family: "Medium";
-    src:url("./HyundaiSansTextKRMedium.ttf")
+    src:url("./KiaSignatureLight.ttf")
 }
 
 @font-face{
     font-family: "Regular";
-    src:url("./HyundaiSansTextKRRegular.ttf")
+    src:url("./KiaSignatureRegular.ttf")
 }
