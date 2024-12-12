@@ -1,14 +1,5 @@
 {
   "projects": {
-    "default": "mydiary-dev-5daf0"
-  },
-  "targets": {
-    "mydiary-dev-5daf0": {
-      "hosting": {
-        "thankstape": [
-          "thankstape"
-        ]
-      }
-    }
+    "default": "thankstape-3c117"
   }
 }
