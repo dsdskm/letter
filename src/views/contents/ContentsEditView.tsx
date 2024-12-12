@@ -7,10 +7,6 @@ import { AccountState } from "state/stateAction";
 import ReactPlayer from "react-player";
 import Loading from "views/components/Loading";
 import { isMobile } from "react-device-detect";
-import bgContents from "images/pc/background_contents.png";
-import airplane from "images/pc/airplane.png";
-import mobileBgContents from "images/mobile/background_contents.png";
-import mobileAirplane from "images/mobile/airplane.png";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { MSG } from "common/resources";
@@ -52,8 +48,6 @@ const ContentsEditView = () => {
   const [videoHeight, setVideoHeight] = useState<number>(0);
   const [originVideoWidth, setOriginVideoWidth] = useState<number>(0);
   const [originVideoHeight, setOriginVideoHeight] = useState<number>(0);
-  const backgroundImage = isMobile ? mobileBgContents : bgContents;
-  const airplaneIcon = isMobile ? mobileAirplane : airplane;
   const airplaneWidth = isMobile ? 50 : 70;
   const airplaneHeight = isMobile ? 50 : 70;
   const titleHeight = isMobile ? 5 : 10;
@@ -145,28 +139,7 @@ const ContentsEditView = () => {
     <>
       <>
         <Wrapper>
-          <ContentsWrapper
-            sx={{
-              background: `url(${backgroundImage})`,
-              backgroundPosition: "center",
-              backgroundSize: "cover",
-              width: width,
-              minWidth: width,
-              height: height,
-            }}
-          >
-            <Box sx={{ background: `url(${airplaneIcon})`, width: airplaneWidth, height: airplaneHeight, mt: 3, backgroundSize: "contain", backgroundRepeat: "no-repeat" }} />
-
-            <TitleWrapper sx={{ p: 3,  height: titleHeight }} elevation={0}>
-              <Button disabled={!isReady} sx={{ fontFamily: "medium", fontSize: 25 }} onClick={onDownloadClick}>
-                {accountData.name} {accountData.number}
-              </Button>
-            </TitleWrapper>
-
-            <Box border={1} borderColor="black" sx={{ width: videoWidth, height: videoHeight, backgroundColor: "white", mt: 2 }}>
-              <ReactPlayer width={videoWidth} height={videoHeight} url={contentsData.url} controls onReady={() => setIsReady(true)} />
-            </Box>
-          </ContentsWrapper>
+          
         </Wrapper>
       </>
       <ToastContainer hideProgressBar={false} autoClose={1000 * 60} />

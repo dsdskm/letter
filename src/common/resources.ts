@@ -1,6 +1,6 @@
 export const STYLE = {
     LOGIN_FIELD_WIDTH: 400,
-    LOGIN_FIELD_HEIGHT: 50,
+    LOGIN_FIELD_HEIGHT: 70,
     WIDTH_LABEL: 200
 }
 
@@ -15,7 +15,7 @@ export const LABEL = {
 export const MSG ={
     LOGIN_ERR:"이름, 사번, 생년월일을 확인해주세요.",
     HINT_NAME:"이름을 입력하세요.",
-    HINT_NUMBER:"사번을 입력하세요.(7자리)",
+    HINT_NUMBER:"사번을 입력하고 재생 버튼을 누르세요.(7자리)",
     HINT_BIRTH:"생년월일 입력하세요.(6자리)",
     DOWNLOAD_ERR:"Chrome 브라우져를 통해 다운로드 가능합니다.",
     DOWNLOAD:"잠시 후 다운로드가 시작됩니다.",
