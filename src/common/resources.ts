@@ -13,7 +13,7 @@ export const LABEL = {
     LOGIN:"로그인"
 }
 export const MSG ={
-    LOGIN_ERR:"이름, 사번, 생년월일을 확인해주세요.",
+    LOGIN_ERR:"사번을 확인해주세요.",
     HINT_NAME:"이름을 입력하세요.",
     HINT_NUMBER:"사번을 입력하고 재생 버튼을 누르세요.(7자리)",
     HINT_BIRTH:"생년월일 입력하세요.(6자리)",

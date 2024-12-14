@@ -1,6 +1,6 @@
-import { Box, Button, Card } from "@mui/material";
-import { getAccount, getContents, getImageDownloadUrl } from "api/api";
-import { Account, Contents } from "interface/interface";
+import { Box, Button, Card, Typography } from "@mui/material";
+import { getAccount, getImageDownloadUrl } from "api/api";
+import { Account } from "interface/interface";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { AccountState } from "state/stateAction";
@@ -11,7 +11,8 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { MSG } from "common/resources";
 import { styled } from "@mui/system";
-
+import mobileBgLogin from "images/mobile/background_login.png";
+import bgContents from "images/pc/background_contents.png";
 const Wrapper = styled(Box)({
   display: "flex",
   flexDirection: "column",
@@ -19,22 +20,30 @@ const Wrapper = styled(Box)({
   justifyContent: "center",
 });
 
+const FieldWrapper = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+});
 const ContentsWrapper = styled(Box)({
+  background: "white",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
 });
 
-const TitleWrapper = styled(Card)({
-  backgroundColor: "#8ecfaf",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  borderRadius: 10,
-  height: 10,
+const Title = styled(Typography)({
+  fontFamily: "medium",
+  fontSize: 30,
+  marginTop: 50,
+  color: "#eec07b"
 });
-
+const Text1 = styled(Typography)({
+  fontFamily: "mediuam",
+  fontSize: 30,
+  marginTop: 50,
+  color: "black"
+});
 const ContentsEditView = () => {
   // const isSafari = browserName.includes("Safari");
   const width = isMobile ? window.innerWidth : 1920;
@@ -42,15 +51,18 @@ const ContentsEditView = () => {
   const accountState = useSelector((state: AccountState) => state);
   const id = accountState && accountState.account ? accountState.account.key : "";
   const [accountData, setAccountData] = useState<Account>();
-  const [contentsData, setContentsData] = useState<Contents>();
   const [isReady, setIsReady] = useState<boolean>(false);
   const [videoWidth, setVideoWidth] = useState<number>(0);
   const [videoHeight, setVideoHeight] = useState<number>(0);
   const [originVideoWidth, setOriginVideoWidth] = useState<number>(0);
   const [originVideoHeight, setOriginVideoHeight] = useState<number>(0);
+  const [url, setUrl] = useState<string>()
+  const backgroundImage = isMobile ? mobileBgLogin : bgContents;
+
   const airplaneWidth = isMobile ? 50 : 70;
   const airplaneHeight = isMobile ? 50 : 70;
   const titleHeight = isMobile ? 5 : 10;
+
 
   useEffect(() => {
     const initData = async () => {
@@ -60,22 +72,19 @@ const ContentsEditView = () => {
         const _accountData = await getAccount(id);
         if (_accountData) {
           setAccountData(_accountData);
-          const _contentsData = await getContents(id);
-          if (_contentsData) {
-            _contentsData.url = await getImageDownloadUrl(_contentsData.path);
-            setContentsData(_contentsData);
-            // get video file size
-            const v = document.createElement("video");
-            v.src = _contentsData.url;
-            v.addEventListener(
-              "loadedmetadata",
-              function (e) {
-                setOriginVideoWidth(this.videoWidth);
-                setOriginVideoHeight(this.videoHeight);
-              },
-              false,
-            );
-          }
+          const _url = await getImageDownloadUrl(_accountData.path);
+          // get video file size
+          const v = document.createElement("video");
+          v.src = _url;
+          v.addEventListener(
+            "loadedmetadata",
+            function (e) {
+              setOriginVideoWidth(this.videoWidth);
+              setOriginVideoHeight(this.videoHeight);
+            },
+            false,
+          );
+          setUrl(_url)
         }
       }
     };
@@ -93,8 +102,8 @@ const ContentsEditView = () => {
         h = originVideoHeight / 6;
       }
     } else {
-      w = originVideoWidth / 3;
-      h = originVideoHeight / 3;
+      w = originVideoWidth / 2;
+      h = originVideoHeight / 2;
     }
     setVideoWidth(w);
     setVideoHeight(h);
@@ -107,31 +116,36 @@ const ContentsEditView = () => {
       return;
     }
     */
-    if (contentsData && accountData) {
-      const srcUrl = contentsData.url;
-      toast(MSG.DOWNLOAD);
-      fetch(srcUrl, { method: "GET" })
-        .then((res) => res.blob())
-        .then((blob) => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = `${contentsData.number}_${accountData.name}`;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          a.remove();
-        })
-        .catch((err) => {
-          console.error("err", err);
-        })
-        .finally(() => {
-          toast.dismiss();
-        });
+    if (accountData) {
+      if (url) {
+        toast(MSG.DOWNLOAD);
+        fetch(url, { method: "GET" })
+          .then((res) => res.blob())
+          .then((blob) => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${accountData.team}`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+          })
+          .catch((err) => {
+            console.error("err", err);
+          })
+          .finally(() => {
+            toast.dismiss();
+          });
+      }
     }
+
   };
 
-  if (!accountData || !contentsData) {
+  console.log(`accountData ${JSON.stringify(accountData)}`)
+  console.log(`url ${url}`)
+
+  if (!accountData) {
     return <Loading />;
   }
 
@@ -139,7 +153,21 @@ const ContentsEditView = () => {
     <>
       <>
         <Wrapper>
-          
+          <FieldWrapper
+            sx={{
+              background: `url(${backgroundImage})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              width: width,
+              minWidth: width,
+              height: height,
+            }}
+          >
+            <Title>팀원에게 전하는 따뜻한 영상 메시지</Title>
+            <ContentsWrapper width={videoWidth} height={videoHeight}>
+              <ReactPlayer width={videoWidth} height={videoHeight} url={url} controls />
+            </ContentsWrapper>
+          </FieldWrapper>
         </Wrapper>
       </>
       <ToastContainer hideProgressBar={false} autoClose={1000 * 60} />

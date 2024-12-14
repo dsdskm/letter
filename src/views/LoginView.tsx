@@ -1,5 +1,5 @@
 import { Box, Button, Card, TextField, Typography } from "@mui/material";
-import { BIRTH_ID, LOGIN_ID, NAME_ID, NUMBER_ID, ROUTE_CONTENTS_EDIT_VIEW } from "common/constants";
+import { BIRTH_ID, LOGIN_ID, NAME_ID, NUMBER_ID, ROUTE_CONTENTS } from "common/constants";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -80,21 +80,19 @@ const LoginView = () => {
   const downloadTextFontSize = isMobile ? 12 : 14;
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
-  const [name, setName] = useState<string>("");
   const [number, setNumber] = useState<string>("");
-  const [birth, setBirth] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const backgroundImage = isMobile ? mobileBgLogin : bgLogin;
 
   const onLoginClick = async () => {
-    if (name && number && birth) {
+    if (number) {
       setLoading(true);
       const data = await getAccount(number);
       console.log(`data ${JSON.stringify(data)}`);
-      if (data && data.name === name && data.birth === birth) {
+      if (data) {
         setLoading(false);
         dispatch(setAccount(data.id));
-        navigate(ROUTE_CONTENTS_EDIT_VIEW);
+        navigate(ROUTE_CONTENTS);
         return;
       }
     }
@@ -146,7 +144,7 @@ const LoginView = () => {
             backgroundPosition: "center",
             width: 90,
             height: 90
-          }} />
+          }} onClick={onLoginClick} />
 
         </FieldWrapper>
       </Wrapper>
