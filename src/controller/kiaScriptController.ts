@@ -1,7 +1,7 @@
 import { bucketName, db, dbKia, storage } from "@config/firebaseConfig";
 import { COLLECTION_ACOUNT, COLLECTION_CONTENTS } from "common/constant";
 import { Request, Response } from "express";
-import { collection, doc, getDocs, query, writeBatch } from "firebase/firestore";
+import { collection, doc, getDocs, query, where, writeBatch } from "firebase/firestore";
 const fs = require("fs");
 const path = "./files";
 const xlsx = require("xlsx");
@@ -17,9 +17,17 @@ export const initAccount = async (req: Request, res: Response) => {
     let batchCount = 0;
     const time = new Date().getTime();
     let count = 0;
+    let dupCount = 0;
+    const teamHash: any = {};
     for (const v of firstSheeJson) {
-      console.log(`v ${JSON.stringify(v)}`);
+      // console.log(`v ${JSON.stringify(v)}`);
       const accountRef = doc(dbKia, COLLECTION_ACOUNT, v.number);
+      if (v.number in teamHash) {
+        console.log(`already added ${v.number} ${dupCount} old=${teamHash[v.number].team} new=${v.team}`);
+        dupCount += 1;
+      } else {
+        teamHash[v.number] = v;
+      }
       batch.set(accountRef, {
         id: v.number,
         team: v.team,
@@ -35,6 +43,84 @@ export const initAccount = async (req: Request, res: Response) => {
     }
     await batch.commit();
     console.log(`count=${count}`);
+    res.send(200);
+  } catch (e) {
+    console.log(e);
+    res.send(500);
+  }
+};
+
+export const checkTeamCount = async (req: Request, res: Response) => {
+  try {
+    const teamHash: any = {};
+    let dbCount = 0;
+    const querySnapshot = await getDocs(collection(dbKia, COLLECTION_ACOUNT));
+    querySnapshot.forEach(async (doc) => {
+      const data = doc.data();
+      const q = query(collection(db, "cities"), where("capital", "==", true));
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        console.log(doc.id, " => ", doc.data());
+      });
+      dbCount += 1;
+      if (!(data.team in teamHash)) {
+        teamHash[data.team] = 0;
+      }
+      teamHash[data.team] += 1;
+    });
+
+    let count = 0;
+    let totalCount = 0;
+    Object.keys(teamHash).forEach((team) => {
+      count += 1;
+      console.log(`team=${team} count=${teamHash[team]}`);
+      totalCount += teamHash[team];
+    });
+    console.log(`teamHash dbCount=${dbCount} count=${count} totalCount=${totalCount}`);
+    res.send(200);
+  } catch (e) {
+    console.log(e);
+    res.send(500);
+  }
+};
+
+const update = async (p: string) => {
+  let batch = writeBatch(dbKia);
+  const team = p.split("_")[0];
+  const path = `video/${p}`;
+  console.log(`team=${team} path=${path}`);
+  const q1 = query(collection(dbKia, COLLECTION_ACOUNT), where("team", "==", team.trim()));
+  const querySnapshot1 = await getDocs(q1);
+  querySnapshot1.forEach((d) => {
+    console.log(`id=${d.id}`);
+    const ref = doc(dbKia, COLLECTION_ACOUNT, d.id);
+    batch.update(ref, {
+      path: path,
+    });
+  });
+  await batch.commit();
+};
+
+export const updateVideoPath = async (req: Request, res: Response) => {
+  try {
+    console.log(`update started`);
+    let count = 0;
+    fs.readdir("files/2k/", async (error: any, filelist: any) => {
+      for (const file of filelist) {
+        // await update(file);
+        count += 1;
+        // console.log(`file=${file} count=${count}`)
+        const arr = file.split("_");
+        const rename = arr[0]+".mp4";
+        console.log(`file=${file} rename=${rename}`);
+        fs.rename("files/2k/" + file, "files/video/" + rename, (err: any) => {
+          console.log(err);
+        });
+      }
+    });
+    // await update("BRM팀_최철신 팀장_1");
+    console.log(`update completed`);
     res.send(200);
   } catch (e) {
     console.log(e);
