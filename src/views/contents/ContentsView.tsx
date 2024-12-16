@@ -51,6 +51,10 @@ const ContentsView = () => {
         if (_accountData) {
           setAccountData(_accountData);
           const _url = await getImageDownloadUrl(_accountData.path);
+          if (!_url) {
+            alert("영상이 없습니다.")
+            return
+          }
           // get video file size
           const v = document.createElement("video");
           v.src = _url;
@@ -70,8 +74,8 @@ const ContentsView = () => {
   }, [id]);
 
   useEffect(() => {
-    setVideoWidth(originVideoWidth / 2);
-    setVideoHeight(originVideoHeight / 2);
+    setVideoWidth(originVideoWidth / 5*3);
+    setVideoHeight(originVideoHeight / 5*3);
   }, [originVideoWidth, originVideoHeight]);
 
   if (!accountData) {

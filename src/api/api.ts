@@ -36,7 +36,12 @@ export const _getAccount = async (id: string) => {
 };
 
 export const getImageDownloadUrl = async (path: string) => {
-  const fileRef = ref(storage, path);
-  const url = await getDownloadURL(fileRef);
-  return url;
+  try {
+    const fileRef = ref(storage, path);
+    const url = await getDownloadURL(fileRef);
+    return url;
+  } catch (e) {
+    return ""
+  }
+
 };
