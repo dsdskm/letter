@@ -89,11 +89,14 @@ const update = async (p: string) => {
   let batch = writeBatch(dbKia);
   const team = p.split("_")[0];
   const path = `video/${p}`;
-  console.log(`team=${team} path=${path}`);
+  
   const q1 = query(collection(dbKia, COLLECTION_ACOUNT), where("team", "==", team.trim()));
   const querySnapshot1 = await getDocs(q1);
+  if (querySnapshot1.empty) {
+    console.log(`team=${team} path=${path} is empty`);
+  }
   querySnapshot1.forEach((d) => {
-    console.log(`id=${d.id}`);
+    
     const ref = doc(dbKia, COLLECTION_ACOUNT, d.id);
     batch.update(ref, {
       path: path,
@@ -108,22 +111,36 @@ export const updateVideoPath = async (req: Request, res: Response) => {
     let count = 0;
     fs.readdir("files/2k/", async (error: any, filelist: any) => {
       for (const file of filelist) {
-        // await update(file);
+        await update(file);
         count += 1;
-        // console.log(`file=${file} count=${count}`)
-        const arr = file.split("_");
-        const rename = arr[0]+".mp4";
-        console.log(`file=${file} rename=${rename}`);
-        fs.rename("files/2k/" + file, "files/video/" + rename, (err: any) => {
-          console.log(err);
-        });
       }
     });
-    // await update("BRM팀_최철신 팀장_1");
-    console.log(`update completed`);
     res.send(200);
   } catch (e) {
     console.log(e);
     res.send(500);
   }
 };
+
+export const checkDb = async (req: Request, res: Response) => {
+  try {
+    const q1 = query(collection(dbKia, COLLECTION_ACOUNT));
+    const querySnapshot1 = await getDocs(q1);
+    const hash: any = {}
+    console.log(`querySnapshot1 ${querySnapshot1.size}`)
+    querySnapshot1.forEach((d) => {
+      const data = d.data()
+      if (!(data.team in hash)) {
+        hash[data.team] = d.id
+      }
+    });
+
+    Object.keys(hash).forEach((t) => {
+      console.log(hash[t])
+    })
+    res.send(200);
+  } catch (e) {
+    console.log(e);
+    res.send(500);
+  }
+}
