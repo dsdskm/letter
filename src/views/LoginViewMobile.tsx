@@ -9,7 +9,7 @@ import { LABEL, MSG, STYLE } from "common/resources";
 import { getAccount } from "api/api";
 import bgLogin from "images/mobile/background_login.png";
 import label_thanks_tape from "images/pc/label_thanks_tape.png";
-import icon_tape from "images/pc/icon_tape.png";
+import icon_tape from "images/mobile/icon_tape.png";
 import button_play from "images/pc/button_play.png";
 import { styled } from "@mui/system";
 
@@ -38,13 +38,14 @@ const InputPropsStyle = {
   style: {
     height: "100%",
     borderRadius: 50,
+    fontSize:12
   },
 };
 
 const LoginViewMobile = () => {
   const width = window.innerWidth * 0.999;
   const height = window.innerHeight
-  const fieldWidth = STYLE.LOGIN_FIELD_WIDTH;
+  const fieldWidth = STYLE.LOGIN_FIELD_WIDTH-100;
   const fieldHeight = STYLE.LOGIN_FIELD_HEIGHT;
   const navigate = useNavigate();
   const dispatch = useDispatch<any>();
@@ -104,8 +105,8 @@ const LoginViewMobile = () => {
             background: `url(${icon_tape})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            width: 582 / 3 * 2,
-            height: 328 / 3 * 2
+            width: 582 / 5 * 2,
+            height: 328 / 5 * 2
           }} />
           {getFieldView(NUMBER_ID, number, setNumber, MSG.HINT_NUMBER)}
           <Button sx={{
